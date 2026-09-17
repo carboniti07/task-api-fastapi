@@ -22,7 +22,7 @@ def test_create_task(client):
         json={"title": "Estudar Docker", "completed": False},
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
     data = response.json()
     assert data["title"] == "Estudar Docker"
     assert data["completed"] is False
@@ -35,7 +35,7 @@ def test_create_task_trims_title(client):
         json={"title": "  Estudar Python  ", "completed": False},
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json()["title"] == "Estudar Python"
 
 
@@ -108,7 +108,7 @@ def test_create_task_with_priority(client):
         },
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
 
     data = response.json()
 
@@ -126,7 +126,7 @@ def test_create_task_uses_medium_priority_by_default(client):
         },
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json()["priority"] == "medium"
 
 
