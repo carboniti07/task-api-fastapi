@@ -1,9 +1,14 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+Priority = Literal["low", "medium", "high"]
 
 
 class TaskCreate(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     completed: bool = False
+    priority: Priority = "medium"
 
     @field_validator("title")
     @classmethod
@@ -20,6 +25,7 @@ class TaskRead(BaseModel):
     id: int
     title: str
     completed: bool
+    priority: Priority
 
 
 class TaskList(BaseModel):

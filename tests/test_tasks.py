@@ -97,3 +97,47 @@ def test_delete_task(client):
 
     get_response = client.get(f"/tasks/{created['id']}")
     assert get_response.status_code == 404
+
+def test_create_task_with_priority(client):
+    response = client.post(
+        "/tasks",
+        json={
+            "title": "Estudar CI",
+            "completed": False,
+            "priority": "high",
+        },
+    )
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["title"] == "Estudar CI"
+    assert data["completed"] is False
+    assert data["priority"] == "high"
+
+
+def test_create_task_uses_medium_priority_by_default(client):
+    response = client.post(
+        "/tasks",
+        json={
+            "title": "Estudar Docker",
+            "completed": False,
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["priority"] == "medium"
+
+
+def test_reject_invalid_priority(client):
+    response = client.post(
+        "/tasks",
+        json={
+            "title": "Estudar FastAPI",
+            "completed": False,
+            "priority": "urgent",
+        },
+    )
+
+    assert response.status_code == 422
