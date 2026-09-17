@@ -41,6 +41,7 @@ def create_task(task: TaskCreate, db: DbSession) -> Task:
     new_task = Task(
         title=task.title,
         completed=task.completed,
+        priority=task.priority,
     )
 
     db.add(new_task)
@@ -66,6 +67,7 @@ def update_task(
 
     task.title = updated_task.title
     task.completed = updated_task.completed
+    task.priority = updated_task.priority
 
     db.commit()
     db.refresh(task)
