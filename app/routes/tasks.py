@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.db_models import Task
-from app.schemas import MessageResponse, TaskCreate, TaskList, TaskRead
+from app.schemas import MessageResponse, Priority, TaskCreate, TaskList, TaskRead
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -14,8 +14,23 @@ DbSession = Annotated[Session, Depends(get_db)]
 
 
 @router.get("", response_model=TaskList)
-def list_tasks(db: DbSession) -> TaskList:
-    tasks = db.scalars(select(Task).order_by(Task.id)).all()
+def list_tasks(
+    db: DbSession,
+    completed: bool | None = None,
+    priority: Priority | None = None,
+) -> TaskList:
+    query = select(Task)
+
+    if completed is not None:
+        query = query.where(Task.completed == completed)
+
+    if priority is not None:
+        query = query.where(Task.priority == priority)
+
+    query = query.order_by(Task.id)
+
+    tasks = db.scalars(query).all()
+
     return TaskList(tasks=list(tasks))
 
 
