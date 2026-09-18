@@ -158,3 +158,92 @@ def test_reject_invalid_priority(client):
     )
 
     assert response.status_code == 422
+
+
+def test_filter_tasks_by_completed(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Tarefa concluída",
+            "completed": True,
+            "priority": "medium",
+        },
+    )
+
+    client.post(
+        "/tasks",
+        json={
+            "title": "Tarefa pendente",
+            "completed": False,
+            "priority": "medium",
+        },
+    )
+
+    response = client.get("/tasks?completed=true")
+
+    assert response.status_code == 200
+
+    data = response.json()["tasks"]
+
+    assert len(data) == 1
+    assert data[0]["title"] == "Tarefa concluída"
+    assert data[0]["completed"] is True
+
+
+def test_filter_tasks_by_priority(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Tarefa alta",
+            "completed": False,
+            "priority": "high",
+        },
+    )
+
+    client.post(
+        "/tasks",
+        json={
+            "title": "Tarefa baixa",
+            "completed": False,
+            "priority": "low",
+        },
+    )
+
+    response = client.get("/tasks?priority=high")
+
+    assert response.status_code == 200
+
+    data = response.json()["tasks"]
+
+    assert len(data) == 1
+    assert data[0]["title"] == "Tarefa alta"
+    assert data[0]["priority"] == "high"
+
+
+def test_filter_tasks_by_completed_and_priority(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Alta concluída",
+            "completed": True,
+            "priority": "high",
+        },
+    )
+
+    client.post(
+        "/tasks",
+        json={
+            "title": "Alta pendente",
+            "completed": False,
+            "priority": "high",
+        },
+    )
+
+    response = client.get("/tasks?completed=true&priority=high")
+
+    assert response.status_code == 200
+
+    data = response.json()["tasks"]
+
+    assert len(data) == 1
+    assert data[0]["title"] == "Alta concluída"
