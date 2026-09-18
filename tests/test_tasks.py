@@ -247,3 +247,84 @@ def test_filter_tasks_by_completed_and_priority(client):
 
     assert len(data) == 1
     assert data[0]["title"] == "Alta concluída"
+
+def test_list_tasks_with_limit(client):
+    for index in range(5):
+        client.post(
+            "/tasks",
+            json={
+                "title": f"Tarefa {index + 1}",
+                "completed": False,
+                "priority": "medium",
+            },
+        )
+
+    response = client.get("/tasks?limit=2")
+
+    assert response.status_code == 200
+
+    tasks = response.json()["tasks"]
+
+    assert len(tasks) == 2
+    assert tasks[0]["title"] == "Tarefa 1"
+    assert tasks[1]["title"] == "Tarefa 2"
+
+
+def test_list_tasks_with_offset(client):
+    for index in range(5):
+        client.post(
+            "/tasks",
+            json={
+                "title": f"Tarefa {index + 1}",
+                "completed": False,
+                "priority": "medium",
+            },
+        )
+
+    response = client.get("/tasks?limit=2&offset=2")
+
+    assert response.status_code == 200
+
+    tasks = response.json()["tasks"]
+
+    assert len(tasks) == 2
+    assert tasks[0]["title"] == "Tarefa 3"
+    assert tasks[1]["title"] == "Tarefa 4"
+
+
+def test_list_tasks_filters_and_pagination(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Alta 1",
+            "completed": False,
+            "priority": "high",
+        },
+    )
+
+    client.post(
+        "/tasks",
+        json={
+            "title": "Baixa",
+            "completed": False,
+            "priority": "low",
+        },
+    )
+
+    client.post(
+        "/tasks",
+        json={
+            "title": "Alta 2",
+            "completed": False,
+            "priority": "high",
+        },
+    )
+
+    response = client.get("/tasks?priority=high&limit=1&offset=1")
+
+    assert response.status_code == 200
+
+    tasks = response.json()["tasks"]
+
+    assert len(tasks) == 1
+    assert tasks[0]["title"] == "Alta 2"
