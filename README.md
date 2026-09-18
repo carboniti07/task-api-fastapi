@@ -136,3 +136,7 @@ O título é obrigatório, remove espaços extras nas extremidades e aceita até
 ## Observação sobre o banco
 
 Este projeto é didático e usa `Base.metadata.create_all()` para criar tabelas automaticamente. Isso mantém o estudo focado em FastAPI, SQLAlchemy, PostgreSQL, uv, Make e Docker. Em sistemas com evolução contínua de schema, o passo seguinte seria adotar uma ferramenta de migração.
+
+## Status
+
+Projeto em evolução contínua para estudo de FastAPI, testes, Docker e CI/CD.
