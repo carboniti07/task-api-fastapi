@@ -18,6 +18,8 @@ def list_tasks(
     db: DbSession,
     completed: bool | None = None,
     priority: Priority | None = None,
+    limit: int = 10,
+    offset: int = 0,
 ) -> TaskList:
     query = select(Task)
 
@@ -27,7 +29,7 @@ def list_tasks(
     if priority is not None:
         query = query.where(Task.priority == priority)
 
-    query = query.order_by(Task.id)
+    query = query.order_by(Task.id).limit(limit).offset(offset)
 
     tasks = db.scalars(query).all()
 
